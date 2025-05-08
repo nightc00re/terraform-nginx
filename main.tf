@@ -1,9 +1,3 @@
-provider "aws" {
-  region = "us-east-2"
-}
-
-data "aws_region" "current" {}
-
 data "aws_ami" "amazon_linux_2" {
   most_recent = true
   owners      = ["amazon"]
@@ -21,13 +15,12 @@ data "aws_ami" "amazon_linux_2" {
 
 resource "aws_instance" "nginx_instance" {
   ami           = data.aws_ami.amazon_linux_2.id
-  instance_type = "t2.micro"
-  key_name      = "your-key-name"  # Replace with your key pair
-  subnet_id     = "your-subnet-id" # Replace with a subnet ID in us-east-2
-  security_groups = ["your-security-group-id"]  # Replace with a security group ID in us-east-2
+  instance_type = var.instance_type # Use the variable
+  key_name      = var.key_name      # Use the variable
+  vpc_security_group_ids = [aws_security_group.nginx_sg.id] #<--ADDED
   tags = {
-    Name = "NginxInstance"
+    Name = "${var.project}-nginx-ec2" #Use variable
   }
-  user_data = file("nginx-install.sh")
-  # availability_zone = "us-east-2a" #Optional, but good practice
+  user_data     = file("userdata.sh")
+  subnet_id = aws_subnet.public_subnet.id #Added
 }
