@@ -12,6 +12,7 @@ data "aws_ami" "amazon_linux_2" {
     values = ["x86_64"]
   }
 }
+
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
   tags = {
@@ -27,7 +28,7 @@ resource "aws_internet_gateway" "igw" {
 }
 
 resource "aws_internet_gateway_attachment" "igw_attachment" {
-  vpc_id  = aws_vpc.main.id
+  vpc_id              = aws_vpc.main.id
   internet_gateway_id = aws_internet_gateway.igw.id
 }
 
@@ -94,13 +95,14 @@ resource "aws_security_group" "nginx_sg" {
 }
 
 resource "aws_instance" "nginx_instance" {
-  ami           = data.aws_ami.amazon_linux_2.id
-  instance_type = var.instance_type # Use the variable
-  key_name      = var.key_name      # Use the variable
+  ami           = "ami-00fbe66e10e2eb0f5"
+  instance_type = var.instance_type
+  key_name      = var.key_name
   vpc_security_group_ids = [aws_security_group.nginx_sg.id]
-  tags = {
-    Name = "${var.project}-nginx-ec2" #Use variable
-  }
   user_data     = file("userdata.sh")
+  associate_public_ip_address = true
   subnet_id = aws_subnet.public_subnet.id
+  tags = {
+    Name = "${var.project}-nginx-ec2"
+  }
 }
