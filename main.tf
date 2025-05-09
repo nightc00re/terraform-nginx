@@ -1,18 +1,3 @@
-data "aws_ami" "amazon_linux_2" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["ami-*-amazon-linux-2-x86_64-gp2"]
-  }
-
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
-}
-
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
   tags = {
@@ -95,7 +80,7 @@ resource "aws_security_group" "nginx_sg" {
 }
 
 resource "aws_instance" "nginx_instance" {
-  ami           = "ami-00fbe66e10e2eb0f5"
+  ami           = "ami-00fbe66e10e2eb0f5"  #  Use the explicit AMI ID
   instance_type = var.instance_type
   key_name      = var.key_name
   vpc_security_group_ids = [aws_security_group.nginx_sg.id]
