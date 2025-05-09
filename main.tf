@@ -50,7 +50,7 @@ resource "aws_route_table" "public_rt" {
     gateway_id = aws_internet_gateway.igw.id
   }
 
-  depends_on = [aws_vpc_gateway_attachment.igw_attachment]
+  depends_on = [aws_internet_gateway_attachment.igw_attachment]
   tags = {
     Name = "${var.project}-public-rt"
   }
